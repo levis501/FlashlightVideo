@@ -1,6 +1,7 @@
 Flashlight Video
 ================
 
-Minimal search app for android that launches the video camera.  Change the settings in your video camera app to use the flash, and this app works as a reliable flashlight.
+Minimal flashlight app for android that launches turns on the Android's flash and displays a video preview of what the camera sees.
+Great for looking for lost items in dark places.
 
-This app requires no special permissions, and is open sourced at https://github.com/levis501/FlashlightVideo
+This app requires camera permissions, and is open sourced at https://github.com/levis501/FlashlightVideo

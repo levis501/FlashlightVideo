@@ -27,6 +27,9 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		mCamera = Camera.open();
+		if (mCamera != null) {
+			mCamera.setDisplayOrientation(90);
+		}
 
 		mView = new FlashlightVideoView(this);
 		setContentView(mView);

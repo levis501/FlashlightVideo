@@ -62,8 +62,13 @@ public class FlashlightVideoView extends SurfaceView implements SurfaceHolder.Ca
 			int height) {
 		setCamera(mCamera);
 		if (mCamera != null) {
-			mCamera.setDisplayOrientation(90);
-			mCamera.startPreview();
+			try {
+				mCamera.startPreview();
+			} catch (RuntimeException e) {
+	        	Toast.makeText(mMainActivity, "Unable to set camera preview.  Make sure nothing else is using the camera, and re-launch the app.", Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+				mMainActivity.finish();
+			}
 			mAutoFocusOK = true;
 		}
 	}

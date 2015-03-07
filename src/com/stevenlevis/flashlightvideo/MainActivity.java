@@ -5,6 +5,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -22,11 +23,16 @@ public class MainActivity extends Activity {
 		mView = new FlashlightVideoView(this);
 		setContentView(mView);
 	}
-
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mCamera = Camera.open();
+		try {
+			mCamera = Camera.open();
+		} catch (RuntimeException e) {
+        	Toast.makeText(this, "Unable to set camera preview.  Make sure nothing else is using the camera, or contact the application developer.", Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
 		if (mCamera != null) {
 			mCamera.setDisplayOrientation(90);
 		}
@@ -39,12 +45,22 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-        if (mCamera != null) {
+        releaseCamera();
+	}
+
+	private void releaseCamera() {
+		if (mCamera != null) {
 			mView.setCamera(null);
         	mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
         }
+	}
+	
+	@Override
+	public void onBackPressed() {
+        releaseCamera();
+		finish();
 	}
 
 }

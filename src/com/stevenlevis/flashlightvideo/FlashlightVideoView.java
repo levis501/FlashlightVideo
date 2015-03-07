@@ -1,6 +1,7 @@
 package com.stevenlevis.flashlightvideo;
 
 import java.io.IOException;
+import java.util.List;
 
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -35,9 +36,14 @@ public class FlashlightVideoView extends SurfaceView implements SurfaceHolder.Ca
 	        	Toast.makeText(mMainActivity, "Unable to set camera preview.  Make sure nothing else is using the camera, or contact the application developer.", Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			}
-			Camera.Parameters params = mCamera.getParameters();
-			params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-			mCamera.setParameters(params);
+			try {
+				Camera.Parameters params = mCamera.getParameters();
+				params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+				mCamera.setParameters(params);
+			} catch (RuntimeException e) {
+				Toast.makeText(mMainActivity, "Your camera doesn't appear to support torch mode.", Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+			}
 			requestLayout();
 		}
 	}
@@ -63,6 +69,19 @@ public class FlashlightVideoView extends SurfaceView implements SurfaceHolder.Ca
 		setCamera(mCamera);
 		if (mCamera != null) {
 			try {
+				Camera.Parameters parameters = mCamera.getParameters();
+				List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
+				int maxPixels = -1;
+				Camera.Size maxSize = null;
+				for (Camera.Size size : previewSizes) {
+					int pixels = size.height * size.height;
+					if (pixels > maxPixels) {
+						maxPixels = pixels;
+						maxSize = size;
+					}
+				}
+				parameters.setPreviewSize(maxSize.width, maxSize.height);
+				mCamera.setParameters(parameters);
 				mCamera.startPreview();
 			} catch (RuntimeException e) {
 	        	Toast.makeText(mMainActivity, "Unable to set camera preview.  Make sure nothing else is using the camera, and re-launch the app.", Toast.LENGTH_LONG).show();
